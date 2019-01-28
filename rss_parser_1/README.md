@@ -1,12 +1,16 @@
 ## 1. Создание первого экрана
 
-Этот этап содержит:
+Этот пример содержит:
 
 1. Создание проекта в Android Studio
 2. Верстка простого интерфейса
 3. Обработка события по нажатию на кнопку
 
-Создадим проект выбрав шаблон EmptyActivity. Код операции будет выглядеть примерно так:
+Создадим проект выбрав шаблон EmptyActivity.
+
+![Скриншот](../img/1_create_project.png)
+
+Код операции будет выглядеть примерно так:
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -72,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 </android.support.constraint.ConstraintLayout>
 ```
 
-Теперь подпишемся на нажатие кнопки, и сделаем отображение введенных в текстовое поле данных.  
+Теперь подпишемся на нажатие кнопки, и сделаем отображение введенных в текстовое поле данных в элементе TextView.  
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -109,6 +113,8 @@ apply plugin: 'kotlin-android-extensions'
 или у него поменятся id, проект не пересоберется без исзменения кода операции.
 
 ```kotlin
+import kotlinx.android.synthetic.free.activity_free.*
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,10 +129,17 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-Посмотрим что получилось. После ввода текста и нажатия на кнопку, введенный текст появляется в TextView, которое
-находится над полем ввода. Если спровоцировать смену ориентации у устройства, то мы увидим, что данные теряются.
+Запустим приложение на эмуляторе и посмотрим что получилось.
 
 ![Скриншот](../img/1_vertical.png)
 ![Скриншот](../img/1_horizontal.png)
 
-### Полезные материалы:
+После ввода текста и нажатия на кнопку, введенный текст появляется в TextView.
+Если спровоцировать смену ориентации у устройства, то мы увидим, что данные внутри TextView теряются.
+Это связанно с жизненным циклом операции.
+
+##### Полезные материалы:  
+[Документация операций](https://developer.android.com/guide/components/activities?hl=ru)  
+[Kotlin Android extensions](https://kotlinlang.org/docs/tutorials/android-plugin.html)
+
+### [Следующий пример >>](../rss_parser_2)
