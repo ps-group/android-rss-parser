@@ -33,6 +33,13 @@
 
 ### Проект приложения в Android Studio
 
+Для разработки приложения будем использовать Android Studio. 
+Скачать ее можно с [официального сайта](https://developer.android.com/studio/)  
+
+После запуска выберем **Start a new Android Studio project**
+
+![Первый запуск AS](../img/1_as_start.png)
+
 Не будем искать легких путей и создадим проект выбрав вариант "Add No Activity". 
 Это означает, что IDE не будет автоматически создавать классы экранов, соответствующие им лейауты и добавлять их в
 файл манифеста
@@ -89,6 +96,7 @@ import io.github.psgroup.rssParser.R
 ![Первый запуск](../img/1_first_run.png)
 
 ### Полезные материалы:  
-[Документация активити](https://developer.android.com/guide/components/activities?hl=ru)  
+[Официальный гайд по инструментам Android Studio](https://developer.android.com/studio/intro/)  
+[Урок на русском от StartAndroid по установке AS](https://startandroid.ru/ru/uroki/vse-uroki-spiskom/9-urok-2-ustanovka-i-nastrojka-sredy-razrabotki.html)
 
 #### [Следующий пример >>](../rss_parser_2)
