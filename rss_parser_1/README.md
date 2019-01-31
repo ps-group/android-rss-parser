@@ -1,149 +1,91 @@
 # 1. Создание первого экрана
 
-##### Этот пример содержит:
+### Этот пример содержит:
 
-1. Создание проекта в Android Studio
-2. Верстка простого интерфейса
-3. Обработка события по нажатию на кнопку
+1. Создание макета приложения
+2. Создание проекта в Android Studio
 
-#### Создание проекта и верстка
+#### Макет приложения
 
-Создадим проект выбрав шаблон "Empty Activity". Автоматически создастся проект, в котором имеется только один экран.
+##### Что такое макет приложения?
+Макет приложения - это вариант дизайна вашего будущего приложения. Дизайн определяет внешний вид — то, на что в первую 
+очередь обращает внимание пользователь. От дизайна во многом зависит общее восприятие информации, которую содержит 
+приложение.
+
+##### Как сделать макет приложения?
+
+Можно взять в руки карандаш и листо бумаги и просто нарисовать от руки
+
+![Скетч от руки](../img/1_handmade_scetch.jpg)
+
+Можно использовать сервисы для прототипирования и накидать макет  
+
+Например, вот так будет выглядеть парсер, который мы создадим:
+
+![Скетч от руки](../img/1_prototype.png)
+
+Сервисы для прототипирования:
+
+* [MarvelApp](https://marvelapp.com/)
+* [NinjaMock](https://ninjamock.com/) - был использован для макета парсера
+* [Proto.io](https://proto.io/)
+* [InVision](https://www.invisionapp.com/)
+
+#### Создаем проект в Android Studio
+
+Не будем искать легких путей и создадим проект выбрав вариант "Add No Activity". 
+Это означает, что IDE не будет автоматически создавать классы экранов, соответствующие им лейауты и добавлять их в
+файл манифеста
 
 ![Скриншот](../img/1_create_project.png)
 
-Код активити будет выглядеть примерно так:
+Затем Android Studio предложит задать некоторые характеристики проекта.  
 
-```kotlin
-class MainActivity : AppCompatActivity() {
+Здесь можно выбрать для каких операционных систем будет разрабатываться наш проект  
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
+![Характеристики проекта](../img/1_project_properties.png)
 
-}
+Нажав на **Help me choose**, вы можете посмотреть статистику по использованию версий операционной системы, на момент написания примера она выглядела так:
+
+![Статистика по версиям OS](../img/1_api_statistic.png)
+
+Выберем минимальную версию ОС - 15, чтобы полностью охватить парк устройств  
+Версии API можно будет изменять в ходе разработки проекта, в данный момент он не критичен  
+
+После создания проекта, в панели слева можно увидеть его структуру. Существует несколько режимов просмотра,
+на скриншоте выбран режим для просмотра Android проектов. Голубым отмечены директории исходного кода и отдельно
+Gradle скрипты
+
+![Структура проекта](../img/1_project_directory.png)
+
+##### Создадим классы Activity
+
+Согласно макетам в приложении должно быть два экрана.
+
+Выбираем в Android Studio:  
+**File -> New -> Activity -> Empty Activity**
+
+Откроется окно настройки активити  
+
+* Поставим галочку напротив Generate Layout File, чтобы IDE создала файл разметки  
+* Поставим галочку напротив Launcher Activity, чтобы IDE прописала активити как стартовое в манифесте приложения
+* В Package name допишем presentation.activity, чтобы файл класса актипити был создан в директории presentation/activity
+
+![FeedActivity](../img/1_activity_feed.png)
+
+Должен создаться файл с классом FeedActivity на языке Kotlin и файл activity_feed.xml в директории res/layout.
+Аналогично создадим ArticleActivity, в будущем она будет использоваться для просмотра отдельной новости.  
+
+Если IDE ругается на класс R, к которому происходит обращение в файле сгенеррированной Activity, просто добавьте
+в начало файла строчку:
+
+```Kotlin
+import io.github.psgroup.rssParser.R
 ```
 
-Изменим верстку лейаута так, чтобы он содержал текстовое поле, кнопку и элемент отображающий текст.  
+Теперь можно запустить приложение на эмуляторе:
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/textRssXml"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <EditText
-            android:id="@+id/textInputRssUrl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:inputType="textUri"
-            app:layout_constraintBottom_toBottomOf="@+id/btnFetchRss"
-            app:layout_constraintEnd_toStartOf="@+id/btnFetchRss"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnFetchRss" />
-
-        <Button
-            android:id="@+id/btnFetchRss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fetch"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </android.support.constraint.ConstraintLayout>
-
-</android.support.constraint.ConstraintLayout>
-```
-
-#### Подписка на событие нажатия
-
-Теперь подпишемся на нажатие кнопки, и сделаем отображение введенных в текстовое поле данных в элементе TextView.  
-
-```kotlin
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var mButton: Button
-    private lateinit var mUrlInput: EditText
-    private lateinit var mTextView: TextView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        mButton = findViewById(R.id.btnFetchRss)
-        mUrlInput = findViewById(R.id.textInputRssUrl);
-        mTextView = findViewById(R.id.textRssXml)
-
-        mButton.setOnClickListener {
-            mTextView.text = mUrlInput.text.toString()
-        }
-    }
-
-}
-```
-
-В примере используется стандартный для активити метод findViewById<T>(), чтобы обратиться к элементу UI. Такой подход
-не безопасен, потому что нельзя во время компиляции опеределить сможет ли метод найти view по идентификатору.  
-Подключим gradle-плагин [kotlin-android-extensions](https://kotlinlang.org/docs/tutorials/android-plugin.html) в build.gradle модуля app:
-
-```groovy
-apply plugin: 'kotlin-android-extensions'
-```
-
-Теперь можно обрааться к UI элементам без поиска через функцию findViewById<T>(). Если элемент будет убран из лейаута
-или у него поменятся id, проект не пересоберется без исзменения кода активити. Такой подход позволяет находить
-ошибки на стадии компиляции.
-
-```kotlin
-import kotlinx.android.synthetic.free.activity_free.*
-
-class MainActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        btnFetchRss.setOnClickListener {
-            textRssXml.text = textInputRssUrl.text.toString()
-        }
-    }
-
-}
-```
-
-Запустим приложение на эмуляторе и посмотрим что получилось.
-После ввода текста и нажатия на кнопку, текст появляется в элементе TextView.
-
-![Скриншот](../img/1_vertical.png)
-
-Если повернуть устройство, то данные внутри TextView теряются пропадают.
-
-![Скриншот](../img/1_horizontal.png)
-
-Так происходит, потому что после переворота экран полностью пересоздается, подробнее об этом в следующем примере.
+![Первый запуск](../img/1_first_run.png)
 
 ##### Полезные материалы:  
 [Документация активити](https://developer.android.com/guide/components/activities?hl=ru)  
