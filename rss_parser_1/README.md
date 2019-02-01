@@ -97,6 +97,5 @@ import io.github.psgroup.rssParser.R
 
 ### Полезные материалы:  
 [Официальный гайд по инструментам Android Studio](https://developer.android.com/studio/intro/)  
-[Урок на русском от StartAndroid по установке AS](https://startandroid.ru/ru/uroki/vse-uroki-spiskom/9-urok-2-ustanovka-i-nastrojka-sredy-razrabotki.html)
 
 #### [Следующий пример >>](../rss_parser_2)
