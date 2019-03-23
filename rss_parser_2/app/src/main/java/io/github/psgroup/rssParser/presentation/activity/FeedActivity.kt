@@ -9,6 +9,8 @@ import kotlinx.android.synthetic.main.activity_feed.*
 
 class FeedActivity : AppCompatActivity() {
 
+    private var mUrlDialog: AlertDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feed)
@@ -18,8 +20,13 @@ class FeedActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mUrlDialog?.dismiss()
+    }
+
     private fun openUrlDialog() {
-        AlertDialog.Builder(this)
+        mUrlDialog = AlertDialog.Builder(this)
                 .setTitle("Введите ссылку на RSS")
                 .setPositiveButton("Добавить") { dialog, buttonId ->
                     startActivity(Intent(this, ArticleActivity::class.java))
