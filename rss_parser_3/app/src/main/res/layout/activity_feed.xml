@@ -16,18 +16,26 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <Button
-        android:id="@+id/addRssButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Добавть RSS" />
-
     <TextView
         android:id="@+id/emptyListText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="RSS лента не содержит новостей" />
+
+    <FrameLayout
+        android:id="@+id/addRssButtonBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff">
+
+        <Button
+            android:id="@+id/addRssButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Добавть RSS" />
+
+    </FrameLayout>
 
 </FrameLayout>
