@@ -1,11 +1,11 @@
-# 1. Простая верстка интерфейсов
+# 2. Простая верстка интерфейсов
 
-## Этот пример содержит:
+## Этот пример содержит
 
 1. Написание первой версии интерфейса
 2. Оброботка событий ввода
 
-### Интерфейсы экранов
+### Интерфейс экрана новостей
 
 Так как в предыдущем примере мы создавали файлы экранов через встроенную
 функцию IDE, то xml-файлы разметки были автоматически сгенерированы. Стандартно
@@ -26,8 +26,7 @@
 ```
 
 В нем содержится только корневой элемент ConstrainLayout. Так как наш
-интерфейс довольно простой, заменим его на FrameLayout и добавим остальные
-необходимые элементы согласно макетам.
+интерфейс не содержит большого количества вложенных элементов, заменим его на FrameLayout и добавим остальные необходимые элементы согласно макетам.
 Получится такой xml-файл:
 
 ```xml
@@ -60,8 +59,8 @@
 ```
 
 Кнопку **addRssButton** будем показывать когда пользователь не ввел ссылку на
- RSS ленту, а текст **emptyListText** будем показывать, когда ссылка на RSS
- введена, но список новостей пуст.
+RSS ленту, а текст **emptyListText** будем показывать, когда ссылка на RSS
+введена, но список новостей пуст.
 
 ### Обработка событий ввода
 
@@ -140,6 +139,48 @@ override fun onDestroy() {
 
 В следующем примере мы добавим сохранение состояние экрана после
 переворота.
+
+### Адаптер списка новостей
+
+Для отображения данных в списке RecyclerView используется паттерн Адаптер. Для элемента интерфейса RecycleView можно указать адаптер, который будет создавать и настраивать элементы списка для визуализации.
+
+1. Создадим класс **ArticleViewHolder**, который унаследован от класса **RecyclerView.ViewHolder**. Этот класс будет получать **View**, который можно настраивать для визуализации новости из списка.
+2. Создадим класс **ArticlesAdapter**, который унаследован от класса **RecyclerView.Adapter\<ArticleViewHolder\>**. Этот класс будет заниматься созданием и настройкой **ArticleViewHolder**.
+
+```kotlin
+class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
+class ArticlesAdapter : RecyclerView.Adapter<ArticleViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, position: Int): ArticleViewHolder =
+        LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_article, parent, false)
+            .let { view -> ArticleViewHolder(view) }
+
+    override fun onBindViewHolder(viewHolder: ArticleViewHolder, position: Int) = Unit
+
+    override fun getItemCount(): Int = 100
+
+}
+```
+
+Сейчас **RecyclerView**, получивший ArticlesAdapter, станет отображать в списке 100 элементов, при этом макет каждого элемента будет создаваться из файла **item_article.xml** (см. метод **onCreateViewHolder**).
+
+Сделаем экземпляр **ArticlesAdapter** адаптером списка новостей в **FeedActivity**
+
+```kotlin
+private val mArticlesAdapter = ArticlesAdapter()
+
+// Вызывается внутри метода onCreate
+private fun initArticlesList() {
+    newsList.layoutManager = LinearLayoutManager(this)
+    newsList.adapter = mArticlesAdapter
+}
+```
+
+![Результат](../img/2_add_adapter_result.jpg)
+
+В следующем примере добавим абстракцию ViewModel для хранения состояния экрана.
 
 ### Полезные материалы
 
