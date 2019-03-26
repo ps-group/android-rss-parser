@@ -1,15 +1,17 @@
-package io.github.psgroup.rssParser.presentation.activity
+package io.github.psgroup.rssParser.presentation.activity.presentation
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
 import io.github.psgroup.rssParser.R
 import kotlinx.android.synthetic.main.activity_feed.*
 
 class FeedActivity : AppCompatActivity() {
 
     private var mUrlDialog: AlertDialog? = null
+    private val mArticlesAdapter = ArticlesAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,11 +20,18 @@ class FeedActivity : AppCompatActivity() {
         addRssButton.setOnClickListener {
             openUrlDialog()
         }
+
+        initArticlesList()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mUrlDialog?.dismiss()
+    }
+
+    private fun initArticlesList() {
+        newsList.layoutManager = LinearLayoutManager(this)
+        newsList.adapter = mArticlesAdapter
     }
 
     private fun openUrlDialog() {
