@@ -1,4 +1,4 @@
-package io.github.psgroup.rssParser.presentation.activity
+package io.github.psgroup.rssParser.presentation.activity.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
