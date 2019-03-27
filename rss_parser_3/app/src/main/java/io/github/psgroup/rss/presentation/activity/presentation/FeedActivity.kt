@@ -1,4 +1,4 @@
-package io.github.psgroup.rssParser.presentation.activity.presentation
+package io.github.psgroup.rss.presentation.activity.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,8 +7,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.github.psgroup.rss.presentation.activity.extension.exhaustive
+import io.github.psgroup.rss.presentation.activity.viewmodel.FeedViewModel
 import io.github.psgroup.rssParser.R
-import io.github.psgroup.rssParser.presentation.activity.viewModel.FeedViewModel
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.dialog_input_field.view.*
 
@@ -54,9 +55,9 @@ class FeedActivity : AppCompatActivity() {
         val provider = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())
         mViewModel = provider[FeedViewModel::class.java]
 
-        mViewModel.articles.observe(this, Observer { updateArticles(it) })
-        mViewModel.isFeedExists.observe(this, Observer { updateFeed(it) })
-        mViewModel.isRefreshing.observe(this, Observer { updateRefresher(it) })
+        mViewModel.addButtonViewState.observe(this, Observer { updateAddButtonView(it) })
+        mViewModel.articlesViewState.observe(this, Observer { updateArticlesView(it) })
+        mViewModel.refresherViewState.observe(this, Observer { updateRefresherView(it) })
     }
 
     private fun openUrlDialog() {
@@ -71,28 +72,44 @@ class FeedActivity : AppCompatActivity() {
                 .show()
     }
 
-    private fun updateFeed(isFeedExists: Boolean) {
-        if (isFeedExists) {
-            addRssButtonBackground.visibility = View.GONE
-        } else {
-            addRssButtonBackground.visibility = View.VISIBLE
-        }
+    /*
+    * Пример: при добавлении нового AddButtonViewState, произойдет ошибка компиляции
+    * */
+    private fun updateAddButtonView(viewState: AddButtonViewState) {
+        when (viewState) {
+            AddButtonViewState.Hidden -> {
+                addRssButtonBackground.visibility = View.GONE
+            }
+            AddButtonViewState.Locked -> {
+                addRssButtonBackground.visibility = View.VISIBLE
+                addRssButton.isEnabled = false
+            }
+            AddButtonViewState.ShowButton -> {
+                addRssButtonBackground.visibility = View.VISIBLE
+                addRssButton.isEnabled = true
+            }
+        }.exhaustive
     }
 
-    private fun updateArticles(articles: List<Any>) {
-        val isArticlesExists = articles.isNotEmpty()
-
-        if (isArticlesExists) {
-            newsList.visibility = View.VISIBLE
-            emptyListText.visibility = View.GONE
-        } else {
-            newsList.visibility = View.GONE
-            emptyListText.visibility = View.VISIBLE
-        }
+    private fun updateArticlesView(viewState: ArticlesViewState) {
+        when (viewState) {
+            ArticlesViewState.Hidden -> {
+                newsList.visibility = View.GONE
+                emptyListText.visibility = View.GONE
+            }
+            ArticlesViewState.Empty -> {
+                newsList.visibility = View.GONE
+                emptyListText.visibility = View.VISIBLE
+            }
+            is ArticlesViewState.ShowArticles -> {
+                newsList.visibility = View.VISIBLE
+                emptyListText.visibility = View.GONE
+            }
+        }.exhaustive
     }
 
-    private fun updateRefresher(isRefreshing: Boolean) {
-        listRefresher.isRefreshing = isRefreshing
+    private fun updateRefresherView(viewState: Boolean) {
+        listRefresher.isRefreshing = viewState
     }
 
 }

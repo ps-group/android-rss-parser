@@ -19,9 +19,9 @@
 ```kotlin
 class FeedViewModel : ViewModel() {
 
-    val isFeedExists: LiveData<Boolean>
+    val getAddButtonViewState: LiveData<Boolean>
         get() = mIsFeedExists
-    val isRefreshing: LiveData<Boolean>
+    val getRefresherViewState: LiveData<Boolean>
         get() = mIsRefreshing
     val articles: LiveData<List<Any>>
         get() = mArticles
@@ -53,12 +53,12 @@ private fun initViewModel() {
     mViewModel = provider[FeedViewModel::class.java]
 
     mViewModel.articles.observe(this, Observer { updateArticles(it) })
-    mViewModel.isFeedExists.observe(this, Observer { updateFeed(it) })
-    mViewModel.isRefreshing.observe(this, Observer { updateRefresher(it) })
+    mViewModel.getAddButtonViewState.observe(this, Observer { updateFeed(it) })
+    mViewModel.getRefresherViewState.observe(this, Observer { updateRefresher(it) })
 }
 
-private fun updateFeed(isFeedExists: Boolean) {
-    if (isFeedExists) {
+private fun updateFeed(getAddButtonViewState: Boolean) {
+    if (getAddButtonViewState) {
         addRssButtonBackground.visibility = View.GONE
     } else {
         addRssButtonBackground.visibility = View.VISIBLE
@@ -76,8 +76,8 @@ private fun updateArticles(articles: List<Any>) {
     }
 }
 
-private fun updateRefresher(isRefreshing: Boolean) {
-    listRefresher.isRefreshing = isRefreshing
+private fun updateRefresher(getRefresherViewState: Boolean) {
+    listRefresher.getRefresherViewState = getRefresherViewState
 }
 ```
 

@@ -1,6 +1,5 @@
-package io.github.psgroup.rssParser.presentation.activity.presentation
+package io.github.psgroup.rss.presentation.activity.presentation
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.github.psgroup.rssParser.R
