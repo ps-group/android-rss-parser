@@ -19,22 +19,19 @@
 ```kotlin
 class FeedViewModel : ViewModel() {
 
-    val getAddButtonViewState: LiveData<Boolean>
-        get() = mIsFeedExists
-    val getRefresherViewState: LiveData<Boolean>
-        get() = mIsRefreshing
-    val articles: LiveData<List<Any>>
-        get() = mArticles
+    val addButtonViewState: LiveData<AddButtonViewState>
+        get() = mAddButtonViewState
+    val articlesViewState: LiveData<ArticlesViewState>
+        get() = mArticlesViewState
+    val refresherViewState: LiveData<Boolean>
+        get() = mRefresherViewState
 
-    private val mIsFeedExists = MutableLiveData<Boolean>()
-    private val mArticles = MutableLiveData<List<Any>>()
-    private val mIsRefreshing = MutableLiveData<Boolean>()
-
-    init {
-        mIsFeedExists.value = false
-        mArticles.value = listOf()
-        mIsRefreshing.value = false
-    }
+    private val mAddButtonViewState = MutableLiveData<AddButtonViewState>()
+        .apply { value = AddButtonViewState.Hidden }
+    private val mArticlesViewState = MutableLiveData<ArticlesViewState>()
+        .apply { value = ArticlesViewState.Hidden }
+    private val mRefresherViewState = MutableLiveData<Boolean>()
+        .apply { value = false }
 
     fun onAddRss(url: Editable) = Unit
     fun onRefresh() = Unit
@@ -49,39 +46,81 @@ class FeedViewModel : ViewModel() {
 
 ```kotlin
 private fun initViewModel() {
-    val provider = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())
+    val provider = ViewModelProvider(this, ModelProvider.NewInstanceFactory())
     mViewModel = provider[FeedViewModel::class.java]
 
-    mViewModel.articles.observe(this, Observer { updateArticles(it) })
-    mViewModel.getAddButtonViewState.observe(this, Observer { updateFeed(it) })
-    mViewModel.getRefresherViewState.observe(this, Observer { updateRefresher(it) })
+    mViewModel.addButtonViewState.observe(this, Observer { teAddButtonView(it) })
+    mViewModel.articlesViewState.observe(this, Observer { updateArticlesView })
+    mViewModel.refresherViewState.observe(this, Observer { teRefresherView(it) })
 }
 
-private fun updateFeed(getAddButtonViewState: Boolean) {
-    if (getAddButtonViewState) {
-        addRssButtonBackground.visibility = View.GONE
-    } else {
-        addRssButtonBackground.visibility = View.VISIBLE
+private fun updateAddButtonView(viewState: AddButtonViewState) {
+    when (viewState) {
+        AddButtonViewState.Hidden -> {
+            addRssButtonBackground.visibility = View.GONE
+        }
+        AddButtonViewState.Locked -> {
+            addRssButtonBackground.visibility = View.VISIBLE
+            addRssButton.isEnabled = false
+        }
+        AddButtonViewState.ShowButton -> {
+            addRssButtonBackground.visibility = View.VISIBLE
+            addRssButton.isEnabled = true
+        }
     }
 }
 
-private fun updateArticles(articles: List<Any>) {
-    val isArticlesExists = articles.isNotEmpty()
-    if (isArticlesExists) {
-        newsList.visibility = View.VISIBLE
-        emptyListText.visibility = View.GONE
-    } else {
-        newsList.visibility = View.GONE
-        emptyListText.visibility = View.VISIBLE
+private fun updateArticlesView(viewState: ArticlesViewState) {
+    when (viewState) {
+        ArticlesViewState.Hidden -> {
+            newsList.visibility = View.GONE
+            emptyListText.visibility = View.GONE
+        }
+        ArticlesViewState.Empty -> {
+            newsList.visibility = View.GONE
+            emptyListText.visibility = View.VISIBLE
+        }
+        is ArticlesViewState.ShowArticles -> {
+            newsList.visibility = View.VISIBLE
+            emptyListText.visibility = View.GONE
+        }
     }
 }
 
-private fun updateRefresher(getRefresherViewState: Boolean) {
-    listRefresher.getRefresherViewState = getRefresherViewState
+private fun updateRefresherView(viewState: Boolean) {
+    listRefresher.isRefreshing = viewState
 }
 ```
 
 Как видно из примера, мы подписались на обновления значений в полях **FeedViewModel** и вызываем методы внутри **FeedActivity**, когда происходит уведомление.
+
+Чтобы при добавлении нового ViewState оператор **when** не компилировался, необходимо сделать его результат не игнорируемым. Есть несколько способов это сделать, например, можно присваивать результат функции или вызывать у результата свойство / функцию.
+
+Добавим такое свойство - расширение и будем вызывать его у всех when-операторов, где может ожидаться добавление случаев, чтобы предотвратить ошибку на уровне компиляции.
+
+```kotlin
+val <T> T.exhaustive: T
+    get() = this
+
+/*
+* Пример: при добавлении нового AddButtonViewState, произойдет ошибка компиляции
+* */
+private fun updateAddButtonView(viewState: AddButtonViewState) {
+    when (viewState) {
+        AddButtonViewState.Hidden -> {
+            addRssButtonBackground.visibility = View.GONE
+        }
+        AddButtonViewState.Locked -> {
+            addRssButtonBackground.visibility = View.VISIBLE
+            addRssButton.isEnabled = false
+        }
+        AddButtonViewState.ShowButton -> {
+            addRssButtonBackground.visibility = View.VISIBLE
+            addRssButton.isEnabled = true
+        }
+    }.exhaustive
+}
+```
 
 Теперь можно добавить перенаправление событий пользовательского ввода в **FeedViewModel**:
 
