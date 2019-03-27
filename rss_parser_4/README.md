@@ -43,11 +43,17 @@ object ViewModelInjector {
         return provider[FeedViewModel::class.java]
     }
 
+    private fun newRepository(): IRssRepository = RssRepository(
+        api = RssApi(),
+        parser = RssParser(),
+        storage = RssStorage()
+    )
+
     private object Factory: ViewModelProvider.Factory {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass == FeedViewModel::class) {
-                return FeedViewModel(RssRepository()) as T
+            if (modelClass == FeedViewModel::class.java) {
+                return FeedViewModel(newRepository()) as T
             }
 
             throw IllegalArgumentException(
